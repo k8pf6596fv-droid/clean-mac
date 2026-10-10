@@ -1,0 +1,85 @@
+name: Build CLEAN
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Informations sur l'environnement
+        run: |
+          uname -m
+          sw_vers
+          xcodebuild -version
+          swift --version
+
+      - name: Tests unitaires
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -eo pipefail
+          swift test 2>&1 | tee test.log
+
+      - name: Compiler, vérifier et créer le DMG
+        shell: bash
+        env:
+          VERSION: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '1.0.0' }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          set -eo pipefail
+          ./scripts/build_app.sh 2>&1 | tee build.log
+
+      - name: Test de lancement (informatif)
+        continue-on-error: true
+        shell: bash
+        run: |
+          dist/CLEAN.app/Contents/MacOS/Clean &
+          PID=$!
+          sleep 6
+          if kill -0 "$PID" 2>/dev/null; then echo "L'application tourne (PID $PID)"; kill "$PID"; else echo "L'application s'est arrêtée seule"; exit 1; fi
+
+      - name: Publier le DMG (artefact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: CLEAN-macOS-arm64
+          path: |
+            dist/*.dmg
+            dist/*.sha256
+          if-no-files-found: error
+
+      - name: Publier les journaux (artefact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: |
+            test.log
+            build.log
+          if-no-files-found: ignore
+
+      - name: Publier dans les Releases (tags vX.Y.Z)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/*.dmg
+            dist/*.sha256
+
+      - name: Échouer si les tests ont échoué
+        if: steps.tests.outcome != 'success'
+        run: |
+          echo "Les tests unitaires ont échoué : n'installez pas ce DMG. Consultez l'artefact logs."
+          exit 1

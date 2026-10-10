@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDevelopmentRegion</key><string>fr</string>
+    <key>CFBundleExecutable</key><string>Clean</string>
+    <key>CFBundleIconFile</key><string>AppIcon</string>
+    <key>CFBundleIdentifier</key><string>app.clean.mac</string>
+    <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
+    <key>CFBundleName</key><string>CLEAN</string>
+    <key>CFBundleDisplayName</key><string>CLEAN</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>__VERSION__</string>
+    <key>CFBundleVersion</key><string>__BUILD__</string>
+    <key>CFBundleLocalizations</key>
+    <array><string>fr</string><string>en</string></array>
+    <key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
+    <key>LSMinimumSystemVersion</key><string>14.0</string>
+    <key>NSHighResolutionCapable</key><true/>
+    <key>NSPrincipalClass</key><string>NSApplication</string>
+    <key>NSSupportsAutomaticTermination</key><false/>
+    <key>NSHumanReadableCopyright</key><string>CLEAN — gratuit, sans compte, sans télémétrie.</string>
+    <key>NSAppleEventsUsageDescription</key>
+    <string>CLEAN utilise le Finder uniquement pour vider la Corbeille, lorsque vous le demandez.</string>
+    <key>NSDownloadsFolderUsageDescription</key>
+    <string>CLEAN lit la liste de vos Téléchargements pour repérer les fichiers volumineux. Rien n'y est jamais supprimé.</string>
+</dict>
+</plist>
